@@ -25,9 +25,11 @@ export default function Home({
   return (
     <main className="md:flex">
       <div className="md:w-1/2 pt-28 md:pt-0 md:min-h-screen relative grid-line-bg flex items-center justify-center border-b md:border-r border-zinc-100">
-        <Button variant={"ghost"} className="absolute top-5 right-5">
-          <span className="i-lucide-github mr-1"></span>
-          GitHub
+        <Button variant={"ghost"} className="absolute top-5 right-5" asChild>
+          <a href="https://github.com/hehehai/weibo-worth" target="_blank">
+            <span className="i-lucide-github mr-1"></span>
+            GitHub
+          </a>
         </Button>
         <section className="max-md:container md:max-w-3xl pb-36 md:pb-60">
           <div>
