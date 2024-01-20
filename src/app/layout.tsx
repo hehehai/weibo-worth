@@ -12,6 +12,7 @@ const DINFont = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteMeta.host),
   title: siteMeta.title,
   description: siteMeta.description,
   keywords: siteMeta.keywords,
