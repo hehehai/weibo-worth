@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
 import "@/styles/globals.css";
+import { Suspense } from "react";
+import { siteMeta } from "@/lib/site-meta";
 
 const DINFont = localFont({
   src: "../../public/fonts/DINAlternate-Bold.woff2",
@@ -10,10 +12,41 @@ const DINFont = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "微博账号估值 - 测测你的微博账号值多少钱?",
-  description: "输入微博账号快速估算微博账号价值！ 快来试试吧~",
-  keywords:
-    "微博账号,账号估值,微博价值，账号分享，多少钱，微博估价，微博实时，微博号",
+  title: siteMeta.title,
+  description: siteMeta.description,
+  keywords: siteMeta.keywords,
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: siteMeta.title,
+    description: siteMeta.description,
+    url: siteMeta.host,
+    siteName: siteMeta.siteName,
+    images: [
+      {
+        url: siteMeta.ogImage,
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: {
+    title: siteMeta.title,
+    description: siteMeta.description,
+    card: "summary_large_image",
+    images: [
+      {
+        url: siteMeta.ogImage,
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  icons: {
+    shortcut: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -30,8 +63,10 @@ export default function RootLayout({
           DINFont.variable
         )}
       >
-        {children}
-        <Toaster />
+        <Suspense fallback={null}>
+          {children}
+          <Toaster />
+        </Suspense>
       </body>
     </html>
   );
