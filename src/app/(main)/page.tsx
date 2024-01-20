@@ -19,7 +19,7 @@ export default function Home({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const query = SearchParamsSchema.parse(
-    searchParams?.length ? searchParams : getRandomUser()
+    Object.keys(searchParams ?? {}).length ? searchParams : getRandomUser()
   );
 
   return (
