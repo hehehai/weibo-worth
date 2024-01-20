@@ -18,9 +18,9 @@ export default function Home({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const query = SearchParamsSchema.parse(
-    Object.keys(searchParams ?? {}).length ? searchParams : getRandomUser()
-  );
+  const query = SearchParamsSchema.parse(searchParams);
+  const mergeQuery =
+    !searchParams.s && !searchParams.uid ? getRandomUser() : query;
 
   return (
     <main className="md:flex">
@@ -44,19 +44,19 @@ export default function Home({
             </div>
           </div>
           <div className="md:w-[460px] mt-16">
-            <SearchInput defaultValue={query.s}></SearchInput>
+            <SearchInput defaultValue={mergeQuery.s}></SearchInput>
           </div>
         </section>
       </div>
       <div className="md:w-1/2 flex-grow-0 relative flex items-center justify-center py-20">
         <div className="relative z-10">
-          {match(query)
+          {match(mergeQuery)
             .with({ uid: P.when((t) => !!t) }, () => (
-              <WorthContainer uid={query.uid}></WorthContainer>
+              <WorthContainer uid={mergeQuery.uid}></WorthContainer>
             ))
             .with({ s: P.when((t) => !!t) }, () => (
               <Suspense fallback={null}>
-                <SearchResult searchValue={query.s} />
+                <SearchResult searchValue={mergeQuery.s} />
               </Suspense>
             ))
             .otherwise(() => (
