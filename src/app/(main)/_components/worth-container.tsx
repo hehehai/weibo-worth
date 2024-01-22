@@ -9,10 +9,15 @@ import { useWorthCNY } from "@/hooks/useWorthCNY";
 import { Button } from "@/components/ui/button";
 import { toPng } from "html-to-image";
 import { useToast } from "@/components/ui/use-toast";
+import { ClientWeiboUser } from "@/lib/functions";
+import { WeiboUserHistoryRes } from "@/lib/weibo-data";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
-  const data = await res.json();
+  const data: {
+    user: ClientWeiboUser | null,
+    history: WeiboUserHistoryRes | null
+  } = await res.json();
   const { user, history } = data;
   return {
     user,

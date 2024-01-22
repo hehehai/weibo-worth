@@ -14,34 +14,31 @@ const SearchResult = async ({ searchValue }: { searchValue: string }) => {
             <ScrollArea className="md:h-[660px] md:w-[540px] rounded-lg">
               <div className="divide-y divide-slate-400/20">
                 {result.map((item) => (
-                  <div key={item.user.id} className="flex items-center p-3 md:p-4">
+                  <div key={item.id} className="flex items-center p-3 md:p-4">
                     <div className="flex-auto">
                       <div className="font-medium text-base">
-                        @{item.user.screen_name}
+                        @{item.screen_name}
                       </div>
-                      {item.user.verified_reason ? (
+                      {item.verified_reason ? (
                         <div className="mt-1 text-slate-700">
-                          {item.user.verified_reason}
+                          {item.verified_reason}
                         </div>
                       ) : (
-                        item.user.description && (
-                          <div
-                            v-else-if="item.user.description"
-                            className="mt-1 text-slate-700"
-                          >
-                            {item.user.description}
+                        item.description && (
+                          <div className="mt-1 text-slate-700">
+                            {item.description}
                           </div>
                         )
                       )}
                       <div className="mt-1 text-slate-400">
                         <span className="mr-4">
-                          粉丝数 {item.user.followers_count_str}
+                          粉丝数 {item.followers_count_str}
                         </span>
-                        <span>微博数 {item.user.statuses_count}</span>
+                        <span>微博数 {item.statuses_count}</span>
                       </div>
                     </div>
                     <Button variant={"outline"} asChild>
-                      <Link href={`/?uid=${item.user.id}`}>选择</Link>
+                      <Link href={`/?uid=${item.id}`}>选择</Link>
                     </Button>
                   </div>
                 ))}
