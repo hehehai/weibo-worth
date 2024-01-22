@@ -73,10 +73,10 @@ export async function searchUserByKeyword(
       (card: { card_type: number }) => card.card_type == 11
     );
     const userList: ClientWeiboUser[] = (filterResult?.card_group ?? []).map(
-      (user: any) =>
+      (group) =>
         pickUserInfo({
-          ...user,
-          avatar_hd: replaceUserAvatar(user.avatar_hd),
+          ...group.user,
+          avatar_hd: replaceUserAvatar(group.user.avatar_hd),
         })
     );
 

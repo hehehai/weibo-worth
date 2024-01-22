@@ -16,7 +16,7 @@ const SearchResult = async ({ searchValue }: { searchValue: string }) => {
                 {result.map((item) => (
                   <div key={item.id} className="flex items-center p-3 md:p-4">
                     <div className="flex-auto">
-                      <div className="font-medium text-base">
+                      <div className="font-medium text-lg">
                         @{item.screen_name}
                       </div>
                       {item.verified_reason ? (
@@ -30,7 +30,7 @@ const SearchResult = async ({ searchValue }: { searchValue: string }) => {
                           </div>
                         )
                       )}
-                      <div className="mt-1 text-slate-400">
+                      <div className="text-sm mt-1 text-slate-400">
                         <span className="mr-4">
                           粉丝数 {item.followers_count_str}
                         </span>
