@@ -1,8 +1,6 @@
 import { getUserHistoryByUID, getUserInfoByUID } from "@/lib/functions";
 import { z } from "zod";
 
-export const runtime = 'edge'
-
 const worthParamsSchema = z.object({
   uid: z.coerce
     .string()
