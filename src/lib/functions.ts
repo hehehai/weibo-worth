@@ -60,6 +60,10 @@ export async function searchUserByKeyword(
     const fetchUrl = `${searchUser}?containerid=100103type=3%26q=${keyword}%26t=&page_type=searchall`;
     const response = await fetch(fetchUrl, {
       headers: mobileHeaders,
+      next: {
+        // 6 小时
+        revalidate: 60 * 60 * 6,
+      }
     });
     if (!response.ok) {
       throw new Error(response.statusText);
@@ -98,6 +102,10 @@ export async function getUserInfoByUID(uid: string) {
   try {
     const response = await fetch(`${userInfo}${uid}`, {
       headers: mobileHeaders,
+      next: {
+        // 6 小时
+        revalidate: 60 * 60 * 6,
+      }
     });
     if (!response.ok) {
       throw new Error(response.statusText);
@@ -121,6 +129,10 @@ export async function getUserHistoryByUID(uid: string) {
   try {
     const response = await fetch(`${userMonthHistory}${uid}`, {
       headers: desktopHeaders,
+      next: {
+        // 12 小时
+        revalidate: 60 * 60 * 12,
+      }
     });
     if (!response.ok) {
       throw new Error(response.statusText);

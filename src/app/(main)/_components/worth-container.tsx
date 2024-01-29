@@ -2,7 +2,7 @@
 
 import { LoadingIcon, StarIcon, WeiboIcon } from "@/components/icons";
 import { cn, downloadFile } from "@/lib/utils";
-import { useCallback, useRef, useState } from "react";
+import { memo, useCallback, useRef, useState } from "react";
 import useSWRImmutable from "swr/immutable";
 import { convertHistoryChart } from "@/lib/worth";
 import { useWorthCNY } from "@/hooks/useWorthCNY";
@@ -15,8 +15,8 @@ import { WeiboUserHistoryRes } from "@/lib/weibo-data";
 const fetcher = async (url: string) => {
   const res = await fetch(url);
   const data: {
-    user: ClientWeiboUser | null,
-    history: WeiboUserHistoryRes | null
+    user: ClientWeiboUser | null;
+    history: WeiboUserHistoryRes | null;
   } = await res.json();
   const { user, history } = data;
   return {
@@ -25,7 +25,7 @@ const fetcher = async (url: string) => {
   };
 };
 
-const WorthContainer = ({ uid }: { uid: string }) => {
+const WorthContainer = memo(({ uid }: { uid: string }) => {
   const { toast } = useToast();
   const worthCardRef = useRef(null);
   const { data, error, isLoading } = useSWRImmutable(
@@ -65,7 +65,7 @@ const WorthContainer = ({ uid }: { uid: string }) => {
     } finally {
       setExportLoading(false);
     }
-  }, [worthCardRef]);
+  }, [worthCardRef.current]);
 
   if (isLoading) {
     return <LoadingIcon className="text-2xl"></LoadingIcon>;
@@ -201,6 +201,8 @@ const WorthContainer = ({ uid }: { uid: string }) => {
       </div>
     </div>
   );
-};
+});
+
+WorthContainer.displayName = "WorthContainer";
 
 export default WorthContainer;

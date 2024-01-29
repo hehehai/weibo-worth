@@ -8,8 +8,6 @@ import WorthContainer from "./_components/worth-container";
 import { P, match } from "ts-pattern";
 import { getRandomUser } from "@/lib/worth";
 
-export const runtime = 'edge'
-
 const SearchParamsSchema = z.object({
   s: z.coerce.string().max(256).optional().default(""),
   uid: z.coerce.string().optional().default(""),

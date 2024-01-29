@@ -1,10 +1,11 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Button } from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
+import { usePathname, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
+import { memo, useCallback, useMemo } from "react";
 
 interface FormElements extends HTMLFormControlsCollection {
   searchInput: HTMLInputElement;
@@ -13,36 +14,39 @@ interface SearchFormElement extends HTMLFormElement {
   readonly elements: FormElements;
 }
 
-const SearchInput = ({ defaultValue }: { defaultValue?: string }) => {
+const SearchInput = memo(({ defaultValue }: { defaultValue?: string }) => {
   const router = useRouter();
   const pathname = usePathname();
 
   const { toast } = useToast();
 
-  const handleSearch = (e: React.FormEvent<SearchFormElement>) => {
-    e.preventDefault();
-    const searchValue = e.currentTarget.elements.searchInput.value;
-    if (!searchValue?.trim()) {
-      return toast({
-        title: "输入微博账号名称或账号 ID",
-        description: (
-          <div>
-            <p>账号 ID 如何获取？</p>
-            <ul>
-              <li>任意账号详情页面 weibo.com/u/[xxxxxxxxxx]</li>
-              <li>其中 [xxxxxxxxxx] 为账号 ID</li>
-            </ul>
-          </div>
-        ),
-      });
-    }
+  const handleSearch = useCallback(
+    (e: React.FormEvent<SearchFormElement>) => {
+      e.preventDefault();
+      const searchValue = e.currentTarget.elements.searchInput.value;
+      if (!searchValue?.trim()) {
+        return toast({
+          title: "输入微博账号名称或账号 ID",
+          description: (
+            <div>
+              <p>账号 ID 如何获取？</p>
+              <ul>
+                <li>任意账号详情页面 weibo.com/u/[xxxxxxxxxx]</li>
+                <li>其中 [xxxxxxxxxx] 为账号 ID</li>
+              </ul>
+            </div>
+          ),
+        });
+      }
 
-    const params = new URLSearchParams();
-    params.set("s", searchValue);
-    router.push(`${pathname}?${params.toString()}`);
-  };
+      const params = new URLSearchParams();
+      params.set("s", searchValue);
+      router.push(`${pathname}?${params.toString()}`);
+    },
+    [pathname, router, toast]
+  );
 
-  const handleQuestion = () => {
+  const handleQuestion = useCallback(() => {
     toast({
       title: "账号 ID 如何获取？",
       description: (
@@ -65,7 +69,7 @@ const SearchInput = ({ defaultValue }: { defaultValue?: string }) => {
         </div>
       ),
     });
-  };
+  }, [toast]);
 
   return (
     <div>
@@ -80,7 +84,11 @@ const SearchInput = ({ defaultValue }: { defaultValue?: string }) => {
           defaultValue={defaultValue}
           placeholder="输入微博账号名称或账号 ID"
         />
-        <Button size={"lg"} className="mt-4 md:mt-0 md:ml-3 max-md:w-full" type="submit">
+        <Button
+          size={"lg"}
+          className="mt-4 md:mt-0 md:ml-3 max-md:w-full"
+          type="submit"
+        >
           <span className="i-lucide-calculator mr-2 text-lg"></span>
           开始评估
         </Button>
@@ -96,6 +104,8 @@ const SearchInput = ({ defaultValue }: { defaultValue?: string }) => {
       </div>
     </div>
   );
-};
+});
+
+SearchInput.displayName = "SearchInput";
 
 export default SearchInput;

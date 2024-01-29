@@ -3,8 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { searchUserByKeyword } from "@/lib/functions";
 import Link from "next/link";
+import { memo } from "react";
 
-const SearchResult = async ({ searchValue }: { searchValue: string }) => {
+const SearchResult = memo(async ({ searchValue }: { searchValue: string }) => {
   const result = await searchUserByKeyword(searchValue);
   return (
     <div className="max-md:container">
@@ -51,6 +52,8 @@ const SearchResult = async ({ searchValue }: { searchValue: string }) => {
       </Card>
     </div>
   );
-};
+});
+
+SearchResult.displayName = "SearchResult";
 
 export default SearchResult;

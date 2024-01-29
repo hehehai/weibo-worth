@@ -23,7 +23,7 @@ export function useWorthCNY(user: any) {
     } else {
       setWorth('0')
     }
-  }, [user?.id])
+  }, [user])
 
   return worth
 }
