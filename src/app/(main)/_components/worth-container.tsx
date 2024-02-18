@@ -1,89 +1,51 @@
-"use client";
-
-import { LoadingIcon, StarIcon, WeiboIcon } from "@/components/icons";
-import { cn, downloadFile } from "@/lib/utils";
-import { memo, useCallback, useRef, useState } from "react";
-import useSWRImmutable from "swr/immutable";
+import { WeiboIcon } from "@/components/icons";
+import { cn } from "@/lib/utils";
+import { calculateAccountValue, convertStringToNumber } from "@/lib/worth";
 import { convertHistoryChart } from "@/lib/worth";
-import { useWorthCNY } from "@/hooks/useWorthCNY";
-import { Button } from "@/components/ui/button";
-import { toPng } from "html-to-image";
-import { useToast } from "@/components/ui/use-toast";
-import { ClientWeiboUser } from "@/lib/functions";
-import { WeiboUserHistoryRes } from "@/lib/weibo-data";
+import {
+  ClientWeiboUser,
+  getUserHistoryByUID,
+  getUserInfoByUID,
+} from "@/lib/functions";
+import { ExportWrapper } from "./export-wrapper";
 
-const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  const data: {
-    user: ClientWeiboUser | null;
-    history: WeiboUserHistoryRes | null;
-  } = await res.json();
-  const { user, history } = data;
-  return {
-    user,
-    history: history ? convertHistoryChart(history) : null,
-  };
-};
-
-const WorthContainer = memo(({ uid }: { uid: string }) => {
-  const { toast } = useToast();
-  const worthCardRef = useRef(null);
-  const { data, error, isLoading } = useSWRImmutable(
-    `/worth?uid=${uid}`,
-    fetcher
-  );
-  const worthCNY = useWorthCNY(data?.user);
-  const [exportLoading, setExportLoading] = useState(false);
-
-  const handleExportImage = useCallback(async () => {
-    try {
-      if (!worthCardRef.current) {
-        throw new Error("worthCardRef.current is null");
-      }
-      setExportLoading(true);
-      let dataUrl = "";
-      const minDataLength = 2000000;
-      let i = 0;
-      const maxAttempts = 10;
-
-      // fix： https://github.com/bubkoo/html-to-image/issues/361
-      while (dataUrl.length < minDataLength && i < maxAttempts) {
-        dataUrl = await toPng(worthCardRef.current, { pixelRatio: 1.5 });
-        i += 1;
-      }
-      const fileName = data?.user?.screen_name ?? uid;
-      downloadFile(`${fileName}.png`, dataUrl);
-      toast({
-        title: "图片导出成功",
-        description: `已保存至本地: ${fileName}.png`,
-      });
-    } catch (err) {
-      toast({
-        title: "图片导出失败",
-        description: "github 反馈",
-      });
-    } finally {
-      setExportLoading(false);
-    }
-  }, [worthCardRef.current]);
-
-  if (isLoading) {
-    return <LoadingIcon className="text-2xl"></LoadingIcon>;
-  } else if (error) {
-    return (
-      <div className="text-center">
-        <span className="i-lucide-badge-alert"></span>
-        用户数据加载失败
-      </div>
-    );
+function getWorthCNY(user?: ClientWeiboUser | null) {
+  if (!user) {
+    return "0";
   }
+  const value = calculateAccountValue({
+    followerCount: convertStringToNumber(user.followers_count),
+    articleCount: user.statuses_count,
+    urankLevel: user.urank,
+    mbrankLevel: user.mbrank,
+  });
+
+  return new Intl.NumberFormat("ja-JP", {
+    // style: "currency",
+    currency: "JPY",
+  }).format(value);
+}
+
+const WorthContainer = async ({ uid }: { uid: string }) => {
+  const [userInfo, userHistory] = await Promise.allSettled([
+    getUserInfoByUID(uid),
+    getUserHistoryByUID(uid),
+  ]);
+
+  const data = {
+    user: userInfo.status === "fulfilled" ? userInfo.value : null,
+    history:
+      userHistory.status === "fulfilled"
+        ? userHistory.value
+          ? convertHistoryChart(userHistory.value)
+          : null
+        : null,
+  };
+  const worthCNY = getWorthCNY(data?.user);
 
   return (
     <div className="max-md:container md:w-[520px]">
-      <div
-        ref={worthCardRef}
-        className="bg-white w-full md:min-h-[600px] rounded-3xl overflow-hidden border-4 border-gray-300"
-      >
+      <ExportWrapper userName={data?.user?.screen_name ?? uid} uid={uid}>
         <div className="w-full h-full p-5 md:p-8 bg-yellow-50/50">
           <div className="flex items-center space-x-4 md:space-x-6">
             <div className="ios-rounded relative w-24 h-24 md:w-[120px] md:h-[120px] bg-gray-300 overflow-hidden shrink-0">
@@ -173,35 +135,10 @@ const WorthContainer = memo(({ uid }: { uid: string }) => {
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="md:flex items-center justify-between mt-10 max-md:space-y-4">
-        <div className="flex items-center max-md:justify-center space-x-1 text-orange-500">
-          <StarIcon></StarIcon>
-          <a
-            href="https://speechless.fun"
-            target="_blank"
-            className="text-sm hover:underline"
-          >
-            备份 @{data?.user?.screen_name} 的微博
-          </a>
-        </div>
-        <Button
-          size={"lg"}
-          className="max-md:w-full space-x-1"
-          onClick={handleExportImage}
-        >
-          {exportLoading ? (
-            <LoadingIcon className="text-lg"></LoadingIcon>
-          ) : (
-            <span className="i-lucide-download text-lg"></span>
-          )}
-          <span>下载图片</span>
-        </Button>
-      </div>
+      </ExportWrapper>
     </div>
   );
-});
+};
 
 WorthContainer.displayName = "WorthContainer";
 

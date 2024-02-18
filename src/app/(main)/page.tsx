@@ -7,6 +7,9 @@ import { ContentBlurGradient } from "./_components/content-blur-gradient";
 import WorthContainer from "./_components/worth-container";
 import { P, match } from "ts-pattern";
 import { getRandomUser } from "@/lib/worth";
+import { LoadingIcon } from "@/components/icons";
+
+export const revalidate = 60 * 60 * 6; // 6h
 
 const SearchParamsSchema = z.object({
   s: z.coerce.string().max(256).optional().default(""),
@@ -52,10 +55,24 @@ export default function Home({
         <div className="relative z-10">
           {match(mergeQuery)
             .with({ uid: P.when((t) => !!t) }, () => (
-              <WorthContainer uid={mergeQuery.uid}></WorthContainer>
+              <Suspense
+                fallback={
+                  <div className="max-md:container md:w-[520px] h-full flex items-center justify-center">
+                    <LoadingIcon className="text-lg" />
+                  </div>
+                }
+              >
+                <WorthContainer uid={mergeQuery.uid}></WorthContainer>
+              </Suspense>
             ))
             .with({ s: P.when((t) => !!t) }, () => (
-              <Suspense fallback={null}>
+              <Suspense
+                fallback={
+                  <div className="max-md:container md:w-[540px] h-full flex items-center justify-center">
+                    <LoadingIcon className="text-lg" />
+                  </div>
+                }
+              >
                 <SearchResult searchValue={mergeQuery.s} />
               </Suspense>
             ))
