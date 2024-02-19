@@ -1,6 +1,8 @@
 import { getUserHistoryByUID, getUserInfoByUID } from "@/lib/functions";
 import { z } from "zod";
 
+export const revalidate = 21600; // 6h
+
 const worthParamsSchema = z.object({
   uid: z.coerce
     .string()

@@ -9,7 +9,7 @@ import { P, match } from "ts-pattern";
 import { getRandomUser } from "@/lib/worth";
 import { LoadingIcon } from "@/components/icons";
 
-export const revalidate = 60 * 60 * 6; // 6h
+export const revalidate = 21600; // 6h
 
 const SearchParamsSchema = z.object({
   s: z.coerce.string().max(256).optional().default(""),

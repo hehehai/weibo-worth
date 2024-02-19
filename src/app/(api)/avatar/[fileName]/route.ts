@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+export const revalidate = 21600; // 6h
+
 const imagePrefix = "https://wx1.sinaimg.cn/orj480";
 
 const worthParamsSchema = z.object({
