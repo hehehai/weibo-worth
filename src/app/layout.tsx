@@ -70,7 +70,7 @@ export default function RootLayout({
           <Toaster />
         </Suspense>
       </body>
-      <GoogleAnalytics gaId="G-27BEE21LC4" />
+      <GoogleAnalytics gaId="G-VE316E4Q39" />
     </html>
   );
 }
