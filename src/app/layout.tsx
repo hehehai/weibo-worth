@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import "@/styles/globals.css";
 import { Suspense } from "react";
 import { siteMeta } from "@/lib/site-meta";
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 const DINFont = localFont({
   src: "../../public/fonts/DINAlternate-Bold.woff2",
@@ -69,6 +70,7 @@ export default function RootLayout({
           <Toaster />
         </Suspense>
       </body>
+      <GoogleAnalytics gaId="G-27BEE21LC4" />
     </html>
   );
 }
